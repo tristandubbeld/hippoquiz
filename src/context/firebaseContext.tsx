@@ -9,6 +9,10 @@ export const FirebaseProvider: React.FC = ({ children }) => {
   return <FirebaseContext.Provider value={db}>{children}</FirebaseContext.Provider>;
 };
 
+/*
+ * Custom useFirestore hook
+ */
+
 export function useFirestore() {
   const context = React.useContext(FirebaseContext);
 
@@ -19,43 +23,88 @@ export function useFirestore() {
   return context;
 }
 
-interface FirestoreValue {
+/*
+ * Custom useSaveToFirestore hook
+ */
+
+export type SaveAction =
+  | { type: 'saveToStoreStart' }
+  | { type: 'saveToStoreSuccess' }
+  | { type: 'saveToStoreFailed'; payload: string };
+
+export type SaveDispatch = (action: SaveAction) => void;
+
+interface SaveState {
+  loading: boolean;
+  error: string | undefined;
+  success: boolean;
+}
+
+function saveReducer(state: SaveState, action: SaveAction) {
+  switch (action.type) {
+    case 'saveToStoreStart': {
+      return {
+        ...state,
+        loading: true,
+      };
+    }
+    case 'saveToStoreSuccess': {
+      return {
+        ...state,
+        loading: false,
+        error: undefined,
+        success: true,
+      };
+    }
+    case 'saveToStoreFailed': {
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+    }
+    default: {
+      return state;
+    }
+  }
+}
+
+interface FirestoreValues {
   [key: string]: any;
 }
 
+const saveInitialState: SaveState = {
+  loading: false,
+  error: undefined,
+  success: false,
+};
+
 export function useSaveToFirestore() {
   const context = React.useContext(FirebaseContext);
-
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [error, setError] = React.useState<string | undefined>(undefined);
-  const [success, setSuccess] = React.useState<boolean>(false);
+  const [{ loading, error, success }, dispatch] = React.useReducer(saveReducer, saveInitialState);
 
   if (context === undefined) {
     throw new Error('useFirestore must be used within a FirebaseProvider');
   }
 
-  const saveToStore = async (collection: string, values: FirestoreValue) => {
-    setLoading(true);
+  const saveToStore = async (collection: string, values: FirestoreValues) => {
+    dispatch({ type: 'saveToStoreStart' });
 
     return await context
       .collection(collection)
       .add(values)
       .then(docRef => {
-        if (error) {
-          setError(undefined);
-        }
-
-        setSuccess(true);
-        setLoading(false);
+        dispatch({
+          type: 'saveToStoreSuccess',
+        });
 
         return docRef.id;
       })
       .catch(err => {
-        if (setSuccess) {
-          setSuccess(false);
-        }
-
-        setError(err);
+        dispatch({
+          type: 'saveToStoreFailed',
+          payload: err,
+        });
       });
   };
 

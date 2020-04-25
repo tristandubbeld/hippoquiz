@@ -5,7 +5,6 @@ import { Text, Box, Stack, Spinner, Flex, Icon, Badge } from '@chakra-ui/core';
 import { User, Round } from '../App';
 // import { useGetFromFirestore } from '../context/firebaseContext';
 import { RouterLink } from '../components/RouterLink';
-import { Card } from '../components/Card';
 import { RouterButton } from '../components/RouterButton';
 import { RoundList } from '../components/RoundList';
 

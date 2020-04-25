@@ -9,6 +9,7 @@ import { Landing } from './pages/Landing';
 import { Overview } from './pages/Overview';
 import { RoundDetails } from './pages/RoundDetails';
 import { loadFromLocalStorage } from './utils/localStorage';
+import { ScoreBoard } from './pages/Scoreboard';
 
 function App() {
   return (
@@ -97,7 +98,7 @@ const QuizPages = () => {
         <Overview user={user} rounds={rounds} />
       </Route>
       <Route path={`${match.path}/scoreboard`} exact>
-        <div>Scoreboard</div>
+        <ScoreBoard />
       </Route>
       <Route path={`${match.path}/round/:roundNumber`} exact>
         <RoundDetails rounds={rounds} />

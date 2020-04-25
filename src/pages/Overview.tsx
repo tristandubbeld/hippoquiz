@@ -13,11 +13,9 @@ interface UserData {
 
 export const Overview = ({ user }: OverviewProps) => {
   const { loading, error, documents } = useGetFromFirestore('users');
-  const [users, setUsers] = React.useState<User[]>();
 
-  React.useEffect(() => {
-    if (documents) {
-      const users = documents.map(doc => {
+  const users = documents
+    ? documents.map(doc => {
         const id = doc.id;
         const user = doc.data() as UserData;
 
@@ -25,11 +23,8 @@ export const Overview = ({ user }: OverviewProps) => {
           id,
           name: user.name,
         };
-      });
-
-      setUsers(users);
-    }
-  }, [documents]);
+      })
+    : undefined;
 
   if (!user) {
     return <div>Please go back to the homepage, something went wrong</div>;

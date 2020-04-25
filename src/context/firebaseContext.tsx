@@ -174,31 +174,31 @@ export function useGetFromFirestore(collection: string) {
     throw new Error('useGetFromFirestore must be used within a FirebaseProvider');
   }
 
-  const getColFromStore = async (collection: string) => {
-    dispatch({ type: 'getFromStoreStart' });
-
-    return await context
-      .collection(collection)
-      .get()
-      .then(snapshot => {
-        const documents = snapshot.docs;
-
-        dispatch({
-          type: 'getFromStoreSuccess',
-          payload: documents,
-        });
-      })
-      .catch(err => {
-        dispatch({
-          type: 'getFromStoreFailed',
-          payload: err,
-        });
-      });
-  };
-
   React.useEffect(() => {
-    getColFromStore(collection);
-  }, [collection]);
+    const getColFromStore = async () => {
+      dispatch({ type: 'getFromStoreStart' });
+
+      return await context
+        .collection(collection)
+        .get()
+        .then(snapshot => {
+          const documents = snapshot.docs;
+
+          dispatch({
+            type: 'getFromStoreSuccess',
+            payload: documents,
+          });
+        })
+        .catch(err => {
+          dispatch({
+            type: 'getFromStoreFailed',
+            payload: err,
+          });
+        });
+    };
+
+    getColFromStore();
+  }, [context, collection]);
 
   return {
     loading,

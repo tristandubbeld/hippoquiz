@@ -1,5 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import { Input, Button, FormControl, FormLabel, Text, Box } from '@chakra-ui/core';
 
 import { useSaveToFirestore } from '../context/firebaseContext';
 import { saveToLocalStorage } from '../utils/localStorage';
@@ -31,14 +32,23 @@ export const Landing = () => {
 
   return (
     <div>
-      <div>Welkom</div>
+      <Text fontSize="4xl" as="h1">
+        De grote{' '}
+        <Text fontWeight="700" color="purple.900">
+          Nijlpaarden
+        </Text>{' '}
+        pubquiz
+      </Text>
+      <Box height={8} />
       <div>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="name">Naam</label>
-          <input id="name" type="text" ref={name} disabled={loading} />
-          <button type="submit" disabled={loading}>
-            Start
-          </button>
+          <FormControl isRequired pb={4}>
+            <FormLabel htmlFor="name">Naam</FormLabel>
+            <Input id="name" type="text" ref={name} placeholder="Augustinus" isDisabled={loading} />
+          </FormControl>
+          <Button variantColor="purple" type="submit" isLoading={loading} isFullWidth>
+            Verder
+          </Button>
           {error && <div>{error}</div>}
         </form>
       </div>

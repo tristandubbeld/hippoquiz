@@ -1,18 +1,25 @@
 import React from 'react';
 
-import { User } from '../App';
-import { useGetFromFirestore } from '../context/firebaseContext';
+import { User, Round } from '../App';
+import { Link, useRouteMatch } from 'react-router-dom';
+// import { useGetFromFirestore } from '../context/firebaseContext';
 
 interface OverviewProps {
   user?: User;
+  rounds?: Round[];
 }
 
 interface UserData {
   name: string;
 }
 
-export const Overview = ({ user }: OverviewProps) => {
-  const { loading, error, documents } = useGetFromFirestore('users');
+export const Overview = ({ user, rounds }: OverviewProps) => {
+  const match = useRouteMatch();
+  // const { loading, error, documents } = useGetFromFirestore('users');
+
+  const loading = false;
+  const error = '';
+  const documents: any[] = [];
 
   const users = documents
     ? documents.map(doc => {
@@ -33,21 +40,39 @@ export const Overview = ({ user }: OverviewProps) => {
   return (
     <div>
       <div>Hello {user.name}</div>
-      {loading ? (
-        <div>Loading</div>
-      ) : (
-        <div>
-          {users &&
-            users.map(user => {
-              return <div key={user.id}>{user.name}</div>;
-            })}
-        </div>
-      )}
-      {error && (
-        <div>
-          <div>{error}</div>
-        </div>
-      )}
+
+      <div>
+        {loading ? (
+          <div>Loading</div>
+        ) : (
+          <div>
+            {users &&
+              users.map(user => {
+                return <div key={user.id}>{user.name}</div>;
+              })}
+          </div>
+        )}
+        {error && (
+          <div>
+            <div>{error}</div>
+          </div>
+        )}
+      </div>
+
+      <div>
+        <div>Rondes</div>
+        <div>Klik op een ronde om je antwoorden in te vullen</div>
+        {rounds &&
+          rounds.map((round, index) => {
+            const roundNumber = index + 1;
+
+            return (
+              <Link key={round.id} to={`${match.url}/round/${roundNumber}`}>
+                Ronde {roundNumber}: {round.name}
+              </Link>
+            );
+          })}
+      </div>
     </div>
   );
 };

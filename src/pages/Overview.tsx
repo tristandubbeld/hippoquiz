@@ -7,6 +7,7 @@ import { User, Round } from '../App';
 import { RouterLink } from '../components/RouterLink';
 import { Card } from '../components/Card';
 import { RouterButton } from '../components/RouterButton';
+import { RoundList } from '../components/RoundList';
 
 interface OverviewProps {
   user?: User;
@@ -17,25 +18,54 @@ interface UserData {
   name: string;
 }
 
+const dummyUsers = [
+  {
+    id: '1',
+    name: 'Hendrik',
+  },
+  {
+    id: '2',
+    name: 'Friet land',
+  },
+  {
+    id: '3',
+    name: 'Kaas de kaasboer',
+  },
+  {
+    id: '4',
+    name: 'Frokkie',
+  },
+  {
+    id: '5',
+    name: 'Jonko',
+  },
+  {
+    id: '6',
+    name: 'Florian',
+  },
+];
+
 export const Overview = ({ user, rounds }: OverviewProps) => {
   const match = useRouteMatch();
   // const { loading, error, documents } = useGetFromFirestore('users');
 
   const loading = false;
   const error = '';
-  const documents: any[] = [];
+  // const documents: any[] = [];
 
-  const users = documents
-    ? documents.map(doc => {
-        const id = doc.id;
-        const user = doc.data() as UserData;
+  // const users = documents
+  //   ? documents.map(doc => {
+  //       const id = doc.id;
+  //       const user = doc.data() as UserData;
 
-        return {
-          id,
-          name: user.name,
-        };
-      })
-    : undefined;
+  //       return {
+  //         id,
+  //         name: user.name,
+  //       };
+  //     })
+  //   : undefined;
+
+  const users = dummyUsers;
 
   if (!user) {
     return (
@@ -70,33 +100,7 @@ export const Overview = ({ user, rounds }: OverviewProps) => {
 
       <Box height={4} />
 
-      <div>
-        <Text>Klik op een ronde hieronder om je antwoorden in te vullen.</Text>
-        <Box height={4} />
-        <Stack spacing={2}>
-          {rounds &&
-            rounds.map((round, index) => {
-              const roundNumber = index + 1;
-
-              return (
-                <RouterLink key={round.id} to={`${match.url}/round/${roundNumber}`}>
-                  <Card isSmall borderColor={round.isClosed ? 'green.400' : undefined}>
-                    <Flex direction="row" align="center" justify="space-between">
-                      <Text isTruncated color={round.isClosed ? 'green.400' : undefined}>
-                        Ronde {roundNumber}: {round.name}
-                      </Text>
-                      {round.isClosed ? (
-                        <Icon name="check" mr="3px" color="green.400" />
-                      ) : (
-                        <Icon name="chevron-right" size="24px" />
-                      )}
-                    </Flex>
-                  </Card>
-                </RouterLink>
-              );
-            })}
-        </Stack>
-      </div>
+      <RoundList rounds={rounds} />
 
       <Box height={8} />
 
@@ -105,50 +109,31 @@ export const Overview = ({ user, rounds }: OverviewProps) => {
       <Box height={4} />
 
       <div>
-        <Box>
-          <Badge variantColor="purple" fontSize={14} mr={2} mb={2}>
-            Hendrik
-          </Badge>
-          <Badge variantColor="purple" fontSize={14} mr={2} mb={2}>
-            Friet land
-          </Badge>
-          <Badge variantColor="purple" fontSize={14} mr={2} mb={2}>
-            Kaas de kaasboer
-          </Badge>
-          <Badge variantColor="purple" fontSize={14} mr={2} mb={2}>
-            Frokkie
-          </Badge>
-          <Badge variantColor="purple" fontSize={14} mr={2} mb={2}>
-            Jonko
-          </Badge>
-          <Badge variantColor="purple" fontSize={14} mr={2} mb={2}>
-            Florian
-          </Badge>
-        </Box>
-        <Box height={4} />
-        <RouterButton to={`${match.url}/scoreboard`} variantColor="purple" isFullWidth>
-          Check hier het scorebord
-        </RouterButton>
-      </div>
-
-      <div>
         {loading ? (
           <Flex align="center" justify="center" height="xs">
             <Spinner />
           </Flex>
         ) : (
-          <div>
+          <Box>
             {users &&
               users.map(user => {
-                return <div key={user.id}>{user.name}</div>;
+                return (
+                  <Badge key={user.id} variantColor="purple" fontSize={14} mr={2} mb={2}>
+                    {user.name}
+                  </Badge>
+                );
               })}
-          </div>
+          </Box>
         )}
         {error && (
           <div>
             <div>{error}</div>
           </div>
         )}
+        <Box height={4} />
+        <RouterButton to={`${match.url}/scoreboard`} variantColor="purple" isFullWidth>
+          Check hier het scorebord
+        </RouterButton>
       </div>
     </div>
   );

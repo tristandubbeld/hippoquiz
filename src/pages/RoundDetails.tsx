@@ -26,10 +26,20 @@ export const RoundDetails = ({ rounds }: RoundDetailsProps) => {
       <Box height={8} />
       {currentRound &&
         currentRound.questions.map((question, index) => {
-          return <Question key={question.id} question={question} index={index} />;
+          return (
+            <Question
+              isDisabled={currentRound.isClosed}
+              key={question.id}
+              question={question}
+              index={index}
+            />
+          );
         })}
       <Box height={4} />
-      <Text>*) Wanneer je een antwoord verzonden hebt kun je het eventueel nog veranderen.</Text>
+      <Text>
+        *) Wanneer je een antwoord verzonden hebt, kun je het eventueel nog veranderen tot de ronde
+        gesloten is.
+      </Text>
     </div>
   );
 };

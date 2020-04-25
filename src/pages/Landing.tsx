@@ -3,11 +3,12 @@ import { useHistory } from 'react-router-dom';
 
 import { useSaveToFirestore } from '../context/firebaseContext';
 import { saveToLocalStorage } from '../utils/localStorage';
+import { User } from '../App';
 
 export const Landing = () => {
   const name = React.useRef<HTMLInputElement>(null);
-  const { loading, error, saveToStore } = useSaveToFirestore();
   const history = useHistory();
+  const { loading, error, saveToStore } = useSaveToFirestore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,7 +18,7 @@ export const Landing = () => {
 
       saveToStore('users', { name: name.current.value }).then(id => {
         if (typeof id === 'string') {
-          saveToLocalStorage<{ name: string; id: string }>('user', {
+          saveToLocalStorage<User>('user', {
             name: nameValue,
             id: id,
           });

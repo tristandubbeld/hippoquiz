@@ -1,5 +1,5 @@
 import React from 'react';
-import { FirebaseFirestore } from '@firebase/firestore-types';
+import { FirebaseFirestore, QueryDocumentSnapshot } from '@firebase/firestore-types';
 
 import { db } from '../utils/firebase';
 
@@ -27,12 +27,10 @@ export function useFirestore() {
  * Custom useSaveToFirestore hook
  */
 
-export type SaveAction =
+type SaveAction =
   | { type: 'saveToStoreStart' }
   | { type: 'saveToStoreSuccess' }
   | { type: 'saveToStoreFailed'; payload: string };
-
-export type SaveDispatch = (action: SaveAction) => void;
 
 interface SaveState {
   loading: boolean;
@@ -61,6 +59,7 @@ function saveReducer(state: SaveState, action: SaveAction) {
         ...state,
         loading: false,
         error: action.payload,
+        success: false,
       };
     }
     default: {
@@ -84,7 +83,7 @@ export function useSaveToFirestore() {
   const [{ loading, error, success }, dispatch] = React.useReducer(saveReducer, saveInitialState);
 
   if (context === undefined) {
-    throw new Error('useFirestore must be used within a FirebaseProvider');
+    throw new Error('useSaveToFirestore must be used within a FirebaseProvider');
   }
 
   const saveToStore = async (collection: string, values: FirestoreValues) => {
@@ -113,5 +112,97 @@ export function useSaveToFirestore() {
     error,
     success,
     saveToStore,
+  };
+}
+
+/*
+ * Custom useGetFromFirestore hook
+ */
+
+type GetAction =
+  | { type: 'getFromStoreStart' }
+  | { type: 'getFromStoreSuccess'; payload: QueryDocumentSnapshot<unknown>[] }
+  | { type: 'getFromStoreFailed'; payload: string };
+
+interface GetState {
+  loading: boolean;
+  error?: string;
+  documents?: QueryDocumentSnapshot<unknown>[];
+}
+
+function getReducer<T>(state: GetState, action: GetAction) {
+  switch (action.type) {
+    case 'getFromStoreStart': {
+      return {
+        ...state,
+        loading: true,
+      };
+    }
+    case 'getFromStoreSuccess': {
+      return {
+        ...state,
+        loading: false,
+        error: undefined,
+        documents: action.payload,
+      };
+    }
+    case 'getFromStoreFailed': {
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+    }
+    default: {
+      return state;
+    }
+  }
+}
+
+const getInitialState = {
+  loading: false,
+};
+
+export function useGetFromFirestore(collection: string) {
+  const context = React.useContext(FirebaseContext);
+
+  const [{ loading, error, documents }, dispatch] = React.useReducer<
+    (state: GetState, action: GetAction) => GetState
+  >(getReducer, getInitialState);
+
+  if (context === undefined) {
+    throw new Error('useGetFromFirestore must be used within a FirebaseProvider');
+  }
+
+  const getColFromStore = async (collection: string) => {
+    dispatch({ type: 'getFromStoreStart' });
+
+    return await context
+      .collection(collection)
+      .get()
+      .then(snapshot => {
+        const documents = snapshot.docs;
+
+        dispatch({
+          type: 'getFromStoreSuccess',
+          payload: documents,
+        });
+      })
+      .catch(err => {
+        dispatch({
+          type: 'getFromStoreFailed',
+          payload: err,
+        });
+      });
+  };
+
+  React.useEffect(() => {
+    getColFromStore(collection);
+  }, [collection]);
+
+  return {
+    loading,
+    error,
+    documents,
   };
 }

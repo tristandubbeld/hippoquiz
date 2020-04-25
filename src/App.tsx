@@ -1,8 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch, useRouteMatch } from 'react-router-dom';
 
-import { Landing } from './pages/Landing';
 import { FirebaseProvider } from './context/firebaseContext';
+
+import { Landing } from './pages/Landing';
+import { Overview } from './pages/Overview';
+import { loadFromLocalStorage } from './utils/localStorage';
 
 function App() {
   return (
@@ -21,13 +24,19 @@ function App() {
   );
 }
 
+export interface User {
+  id: string;
+  name: string;
+}
+
 const QuizPages = () => {
   const match = useRouteMatch();
+  const { data: user } = loadFromLocalStorage<User>('user');
 
   return (
     <Switch>
       <Route path={`${match.path}`} exact>
-        <div>Overview</div>
+        <Overview user={user} />
       </Route>
       <Route path={`${match.path}/scoreboard`} exact>
         <div>Scoreboard</div>

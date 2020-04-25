@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
-import { Text, Box, Skeleton, Stack, Spinner, Flex, Icon, Badge, Grid } from '@chakra-ui/core';
+import { Text, Box, Stack, Spinner, Flex, Icon, Badge } from '@chakra-ui/core';
 
 import { User, Round } from '../App';
 // import { useGetFromFirestore } from '../context/firebaseContext';
@@ -82,7 +82,7 @@ export const Overview = ({ user, rounds }: OverviewProps) => {
                 <RouterLink key={round.id} to={`${match.url}/round/${roundNumber}`}>
                   <Card isSmall borderColor={round.isClosed ? 'green.400' : undefined}>
                     <Flex direction="row" align="center" justify="space-between">
-                      <Text isTruncated>
+                      <Text isTruncated color={round.isClosed ? 'green.400' : undefined}>
                         Ronde {roundNumber}: {round.name}
                       </Text>
                       {round.isClosed ? (

@@ -40,6 +40,7 @@ export interface User {
 export interface Question {
   id: string;
   title?: string;
+  isAnswered?: boolean;
 }
 
 export interface Round {
@@ -59,6 +60,7 @@ const rounds: Round[] = [
       },
       {
         id: 'r1_q2',
+        isAnswered: true,
       },
       {
         id: 'r1_q3',

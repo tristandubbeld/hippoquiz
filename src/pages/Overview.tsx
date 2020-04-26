@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { Text, Box, Spinner, Flex, Badge } from '@chakra-ui/core';
 
-// import { useGetFromFirestore } from '../context/firebaseContext';
+import { useGetFromFirestore } from '../context/firebaseContext';
 import { RouterLink } from '../components/RouterLink';
 import { RouterButton } from '../components/RouterButton';
 import { RoundList } from '../components/RoundList';
@@ -19,54 +19,21 @@ interface UserData {
   name: string;
 }
 
-const dummyUsers = [
-  {
-    id: '1',
-    name: 'Hendrik',
-  },
-  {
-    id: '2',
-    name: 'Friet land',
-  },
-  {
-    id: '3',
-    name: 'Kaas de kaasboer',
-  },
-  {
-    id: '4',
-    name: 'Frokkie',
-  },
-  {
-    id: '5',
-    name: 'Jonko',
-  },
-  {
-    id: '6',
-    name: 'Florian',
-  },
-];
-
 export const Overview = ({ user, rounds }: OverviewProps) => {
   const match = useRouteMatch();
-  // const { loading, error, documents } = useGetFromFirestore('users');
+  const { loading, error, documents } = useGetFromFirestore('users');
 
-  const loading = false;
-  const error = '';
-  // const documents: any[] = [];
+  const users = documents
+    ? documents.map(doc => {
+        const id = doc.id;
+        const user = doc.data() as UserData;
 
-  // const users = documents
-  //   ? documents.map(doc => {
-  //       const id = doc.id;
-  //       const user = doc.data() as UserData;
-
-  //       return {
-  //         id,
-  //         name: user.name,
-  //       };
-  //     })
-  //   : undefined;
-
-  const users = dummyUsers;
+        return {
+          id,
+          name: user.name,
+        };
+      })
+    : undefined;
 
   if (!user) {
     return (

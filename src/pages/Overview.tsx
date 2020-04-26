@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
-import { Text, Box, Stack, Spinner, Flex, Icon, Badge } from '@chakra-ui/core';
+import { Text, Box, Spinner, Flex, Badge } from '@chakra-ui/core';
 
 import { User, Round } from '../App';
 // import { useGetFromFirestore } from '../context/firebaseContext';

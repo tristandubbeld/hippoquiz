@@ -2,11 +2,13 @@ import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { Text, Box, Spinner, Flex, Badge } from '@chakra-ui/core';
 
-import { User, Round } from '../App';
 // import { useGetFromFirestore } from '../context/firebaseContext';
 import { RouterLink } from '../components/RouterLink';
 import { RouterButton } from '../components/RouterButton';
 import { RoundList } from '../components/RoundList';
+
+import { User } from '../types/user';
+import { Round } from '../types/round';
 
 interface OverviewProps {
   user?: User;

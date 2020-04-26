@@ -2,8 +2,9 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Text, Box } from '@chakra-ui/core';
 
-import { Round } from '../App';
 import { Question } from '../components/Question';
+
+import { Round } from '../types/round';
 
 interface RoundDetailsProps {
   rounds: Round[];

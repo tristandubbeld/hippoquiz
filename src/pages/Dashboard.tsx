@@ -2,7 +2,8 @@ import React from 'react';
 import { Text } from '@chakra-ui/core';
 
 import { RoundList } from '../components/RoundList';
-import { Round } from '../App';
+
+import { Round } from '../types/round';
 
 interface DashboardProps {
   rounds: Round[];

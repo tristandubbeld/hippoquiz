@@ -13,6 +13,8 @@ import { Dashboard } from './pages/Dashboard';
 import { RoundSettings } from './pages/RoundSettings';
 import { loadFromLocalStorage } from './utils/localStorage';
 import { RoundQuestions } from './pages/RoundQuestions';
+import { Round } from './types/round';
+import { User } from './types/user';
 
 function App() {
   return (
@@ -37,24 +39,6 @@ function App() {
       </FirebaseProvider>
     </ThemeProvider>
   );
-}
-
-export interface User {
-  id: string;
-  name: string;
-}
-
-export interface Question {
-  id: string;
-  title?: string;
-  isAnswered?: boolean;
-}
-
-export interface Round {
-  id: string;
-  name?: string;
-  questions: Question[];
-  isClosed?: boolean;
 }
 
 const rounds: Round[] = [

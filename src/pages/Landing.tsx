@@ -4,7 +4,7 @@ import { Input, Button, FormControl, FormLabel, Text, Box } from '@chakra-ui/cor
 
 import { useSaveToFirestore } from '../context/firebaseContext';
 import { saveToLocalStorage } from '../utils/localStorage';
-import { User } from '../App';
+import { User } from '../types/user';
 
 export const Landing = () => {
   const name = React.useRef<HTMLInputElement>(null);

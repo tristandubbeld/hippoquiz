@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, FormControl, FormLabel, Flex, Input, IconButton } from '@chakra-ui/core';
 
-import { Question as QuestionInterface } from '../App';
+import { Question as QuestionInterface } from '../types/question';
 
 interface QuestionProps {
   question: QuestionInterface;

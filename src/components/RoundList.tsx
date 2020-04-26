@@ -3,8 +3,9 @@ import { Box, Stack, Flex, Icon, Text } from '@chakra-ui/core';
 import { RouterLink } from './RouterLink';
 import { useRouteMatch } from 'react-router-dom';
 
-import { Round } from '../App';
 import { Card } from './Card';
+
+import { Round } from '../types/round';
 
 interface RoundListProps {
   rounds?: Round[];

@@ -12,6 +12,7 @@ import { ScoreBoard } from './pages/Scoreboard';
 import { Dashboard } from './pages/Dashboard';
 import { RoundSettings } from './pages/RoundSettings';
 import { loadFromLocalStorage } from './utils/localStorage';
+import { RoundQuestions } from './pages/RoundQuestions';
 
 function App() {
   return (
@@ -113,6 +114,9 @@ const QuizPages = () => {
       </Route>
       <Route path={`${match.path}/dashboard/round/:roundNumber`} exact>
         <RoundSettings />
+      </Route>
+      <Route path={`${match.path}/dashboard/round/:roundNumber/questions`} exact>
+        <RoundQuestions />
       </Route>
       <Route path={`${match.path}/*`}>
         <Box fontSize="2xl">404 not found</Box>

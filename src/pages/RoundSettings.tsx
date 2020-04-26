@@ -71,7 +71,7 @@ export const RoundSettings = () => {
 
       <AlertDialog isOpen={closeAlertOpen} leastDestructiveRef={cancelRef}>
         <AlertDialogOverlay />
-        <AlertDialogContent>
+        <AlertDialogContent width="calc(100% - 24px)">
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
             Ronde markeren als afgelopen
           </AlertDialogHeader>

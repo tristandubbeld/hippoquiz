@@ -24,13 +24,13 @@ export const RoundList = ({ rounds }: RoundListProps) => {
 
             return (
               <RouterLink key={round.id} to={`${match.url}/round/${roundNumber}`}>
-                <Card isSmall borderColor={round.isClosed ? 'green.400' : undefined}>
+                <Card isSmall borderColor={round.isClosed ? 'green.500' : undefined}>
                   <Flex direction="row" align="center" justify="space-between">
-                    <Text isTruncated color={round.isClosed ? 'green.400' : undefined}>
+                    <Text isTruncated color={round.isClosed ? 'green.500' : undefined}>
                       Ronde {roundNumber}: {round.name}
                     </Text>
                     {round.isClosed ? (
-                      <Icon name="check" mr="3px" color="green.400" />
+                      <Icon name="check" mr="3px" color="green.500" />
                     ) : (
                       <Icon name="chevron-right" size="24px" />
                     )}

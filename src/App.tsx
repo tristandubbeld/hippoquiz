@@ -8,8 +8,10 @@ import { theme } from './theme';
 import { Landing } from './pages/Landing';
 import { Overview } from './pages/Overview';
 import { RoundDetails } from './pages/RoundDetails';
-import { loadFromLocalStorage } from './utils/localStorage';
 import { ScoreBoard } from './pages/Scoreboard';
+import { Dashboard } from './pages/Dashboard';
+import { RoundSettings } from './pages/RoundSettings';
+import { loadFromLocalStorage } from './utils/localStorage';
 
 function App() {
   return (
@@ -24,6 +26,9 @@ function App() {
               </Route>
               <Route path="/quiz">
                 <QuizPages />
+              </Route>
+              <Route path="*">
+                <Box fontSize="2xl">404 not found</Box>
               </Route>
             </Switch>
           </Router>
@@ -102,6 +107,15 @@ const QuizPages = () => {
       </Route>
       <Route path={`${match.path}/round/:roundNumber`} exact>
         <RoundDetails rounds={rounds} />
+      </Route>
+      <Route path={`${match.path}/dashboard`} exact>
+        <Dashboard rounds={rounds} />
+      </Route>
+      <Route path={`${match.path}/dashboard/round/:roundNumber`} exact>
+        <RoundSettings />
+      </Route>
+      <Route path={`${match.path}/*`}>
+        <Box fontSize="2xl">404 not found</Box>
       </Route>
     </Switch>
   );

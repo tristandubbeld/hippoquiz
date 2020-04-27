@@ -78,11 +78,20 @@ export const Overview = ({ user }: OverviewProps) => {
 
       <Box height={4} />
 
-      {roundsLoading ? <Spinner /> : <RoundList rounds={rounds} />}
+      {roundsLoading ? (
+        <Spinner />
+      ) : (
+        <React.Fragment>
+          <Text>Klik op een ronde hieronder om je antwoorden in te vullen.</Text>
+          <RoundList rounds={rounds} />
+        </React.Fragment>
+      )}
 
       <Box height={8} />
 
-      <Text fontWeight="700">Wie doen er mee?</Text>
+      <Text as="h2" fontWeight="700" color="purple.900">
+        Wie doen er mee?
+      </Text>
 
       <Box height={4} />
 

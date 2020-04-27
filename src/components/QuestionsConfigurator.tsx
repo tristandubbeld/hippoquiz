@@ -163,7 +163,7 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
       {newQuestion && (
         <Card isSmall borderColor="gray.200">
           <Flex align="center" height={10}>
-            <Text fontSize="xl" fontWeight="700">
+            <Text fontSize="xl" fontWeight="700" color="purple.900">
               Nieuwe vraag
             </Text>
           </Flex>

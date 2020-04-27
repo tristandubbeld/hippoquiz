@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Stack, Flex, Icon, Text } from '@chakra-ui/core';
+import { Stack, Flex, Icon, Text } from '@chakra-ui/core';
 import { RouterLink } from './RouterLink';
 import { useRouteMatch } from 'react-router-dom';
 
@@ -16,8 +16,6 @@ export const RoundList = ({ rounds }: RoundListProps) => {
 
   return (
     <div>
-      <Text>Klik op een ronde hieronder om je antwoorden in te vullen.</Text>
-      <Box height={4} />
       <Stack spacing={2}>
         {rounds &&
           rounds.map((round, index) => {

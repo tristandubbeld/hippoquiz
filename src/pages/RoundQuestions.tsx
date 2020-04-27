@@ -1,20 +1,39 @@
 import React from 'react';
-import { Select, Button, Box, Text, Stack, IconButton } from '@chakra-ui/core';
+import {
+  Select,
+  Button,
+  Box,
+  Text,
+  IconButton,
+  FormControl,
+  FormLabel,
+  Flex,
+  FormHelperText,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  Stack,
+} from '@chakra-ui/core';
 import { useParams } from 'react-router-dom';
 
 import { useQuestions, useRounds } from '../context/roundsContext';
 import { RouterButton } from '../components/RouterButton';
+import { Card } from '../components/Card';
+
+import { QuestionInput } from '../types/question';
 
 export const RoundQuestions = () => {
   const { roundNumber } = useParams();
   const { rounds } = useRounds();
   const { addQuestion } = useQuestions();
-  const [newQuestion, setNewQuestion] = React.useState({ type: 'text' });
+  const [newQuestion, setNewQuestion] = React.useState<QuestionInput>({ type: 'text' });
 
   const currentRound = rounds[Number(roundNumber) - 1];
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const type = e.target.value;
+    const type = e.target.value as 'text' | 'select';
 
     setNewQuestion(question => {
       return {
@@ -27,16 +46,13 @@ export const RoundQuestions = () => {
   const handleAddQuestion = () => {
     // first firebase stuff, get ID back
 
-    addQuestion(currentRound.id, {
-      id: 'randomId',
-      type: 'text',
-    });
-  };
+    // temporary Id
+    const tempId = currentRound.questions.length + 1;
 
-  const handleSaveQuestion = () => {
-    // add question
-    // then
-    // redirect to round settings
+    addQuestion(currentRound.id, { id: `${tempId}`, ...newQuestion });
+
+    // re-initialize newQuestion
+    setNewQuestion({ type: 'text' });
   };
 
   return (
@@ -52,50 +68,108 @@ export const RoundQuestions = () => {
       <Box height={4} />
 
       <Text as="h1" fontSize="2xl">
-        Ronde {roundNumber}
+        Vragen toevoegen of verwijderen
       </Text>
 
-      <Box height={4} />
+      <FormHelperText>
+        Deze ronde heeft {currentRound.questions.length}{' '}
+        {currentRound.questions.length === 1 ? 'vraag' : 'vragen'}. Voeg een nieuwe vraag toe, of
+        bewerk een bestaande vraag.
+      </FormHelperText>
 
-      <Text>Voeg vragen toe of wijzig het type vragen.</Text>
+      <Box height={8} />
 
-      <Box height={4} />
-
-      {currentRound.questions.map(question => {
+      {currentRound.questions.map((question, index) => {
         return (
-          <div key={question.id}>
-            Type
-            <Select onChange={handleTypeChange}>
-              <option value="text">Text</option>
-              <option value="select">Select</option>
-            </Select>
-          </div>
+          <Box pb={4}>
+            <Card key={question.id} isSmall borderColor="gray.200">
+              <Flex align="center" justify="space-between">
+                <Text fontSize="xl" fontWeight="700">
+                  Vraag {index + 1}
+                </Text>
+                <IconButton aria-label="Vraag verwijderen" icon="delete" variant="ghost" />
+              </Flex>
+              <Box height={4} />
+              <FormControl>
+                <FormLabel>Type vraag</FormLabel>
+                <Select onChange={handleTypeChange} value={question.type}>
+                  <option value="text">Tekstveld</option>
+                  <option value="select">Meerkeuze</option>
+                </Select>
+              </FormControl>
+              {question.type === 'select' && (
+                <Box pt={4}>
+                  <FormLabel>Hoeveel keuzes?</FormLabel>
+                  <Stack align="center" isInline>
+                    <Flex
+                      align="center"
+                      flexGrow={1}
+                      height={10}
+                      px={4}
+                      border="1px"
+                      borderRadius="md"
+                      borderColor="gray.200">
+                      6
+                    </Flex>
+                    <IconButton aria-label="minder" icon="minus" />
+                    <IconButton aria-label="meer" icon="add" />
+                  </Stack>
+                </Box>
+              )}
+            </Card>
+          </Box>
         );
       })}
 
       {newQuestion && (
-        <div>
-          Type
-          <Select onChange={handleTypeChange}>
-            <option value="text">Text</option>
-            <option value="select">Select</option>
-          </Select>
+        <Card isSmall borderColor="gray.200">
+          <Flex align="center" height={10}>
+            <Text fontSize="xl" fontWeight="700">
+              Nieuwe vraag
+            </Text>
+          </Flex>
+          <FormHelperText>
+            Deze vraag wordt pas opgeslagen zodra je op de vraag toevoegen knop klikt.
+          </FormHelperText>
+          <Box height={4} />
+          <FormControl>
+            <FormLabel>Type vraag</FormLabel>
+            <Select onChange={handleTypeChange} value={newQuestion.type}>
+              <option value="text">Tekstveld</option>
+              <option value="select">Meerkeuze</option>
+            </Select>
+          </FormControl>
+
           {newQuestion.type === 'select' && (
-            <div>
-              <div>options</div>
-            </div>
+            <Box pt={4}>
+              <FormLabel>Hoeveel keuzes?</FormLabel>
+              <Stack align="center" isInline>
+                <Flex
+                  align="center"
+                  flexGrow={1}
+                  height={10}
+                  px={4}
+                  border="1px"
+                  borderRadius="md"
+                  borderColor="gray.200">
+                  6
+                </Flex>
+                <IconButton aria-label="minder" icon="minus" />
+                <IconButton aria-label="meer" icon="add" />
+              </Stack>
+              <FormHelperText>
+                Maximaal 8 antwoorden mogelijk. Antwoorden worden getoond als A tot en met H.
+              </FormHelperText>
+            </Box>
           )}
-        </div>
+
+          <Box height={4} />
+
+          <Button variantColor="purple" onClick={handleAddQuestion} isFullWidth>
+            Vraag toevoegen
+          </Button>
+        </Card>
       )}
-
-      <Box height={8} />
-
-      <Stack isInline spacing={2}>
-        <Button onClick={handleSaveQuestion}>Opslaan</Button>
-        <Button flexGrow={1} variantColor="purple" onClick={handleAddQuestion}>
-          Toevoegen
-        </Button>
-      </Stack>
     </div>
   );
 };

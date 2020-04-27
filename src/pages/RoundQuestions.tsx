@@ -18,14 +18,26 @@ import { RouterButton } from '../components/RouterButton';
 import { Card } from '../components/Card';
 
 import { QuestionInput } from '../types/question';
+import { useFirestore, useCollectionOnce } from '../context/firebaseContext';
 
 export const RoundQuestions = () => {
   const { roundNumber } = useParams();
   const { rounds } = useRounds();
-  const { addQuestion } = useQuestions();
+  const { addQuestion, removeQuestion } = useQuestions();
+  const db = useFirestore();
+
+  const tempRoundId = '9SflvV4BfmrWYvi6tJT9';
+  // const questionsRef = db.collection('rounds').doc(tempRoundId).collection('questions');
+  const questionsRef = db.collection(`rounds/${tempRoundId}/questions`);
+  const { data, loading } = useCollectionOnce(questionsRef);
+
+  console.log('loading in questions', loading);
+  console.log('data in questions', data);
+
   const [newQuestion, setNewQuestion] = React.useState<QuestionInput>({ type: 'text' });
 
   const currentRound = rounds[Number(roundNumber) - 1];
+  const questions = currentRound.questions;
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const type = e.target.value as 'text' | 'select';
@@ -42,12 +54,16 @@ export const RoundQuestions = () => {
     // first firebase stuff, get ID back
 
     // temporary Id
-    const tempId = currentRound.questions.length + 1;
+    const tempId = questions.length + 1;
 
     addQuestion(currentRound.id, { id: `${tempId}`, ...newQuestion });
 
     // re-initialize newQuestion
     setNewQuestion({ type: 'text' });
+  };
+
+  const handleRemoveQuestion = (questionId: string) => {
+    removeQuestion(currentRound.id, questionId);
   };
 
   return (
@@ -67,14 +83,13 @@ export const RoundQuestions = () => {
       </Text>
 
       <FormHelperText>
-        Deze ronde heeft {currentRound.questions.length}{' '}
-        {currentRound.questions.length === 1 ? 'vraag' : 'vragen'}. Voeg een nieuwe vraag toe, of
-        bewerk een bestaande vraag.
+        Deze ronde heeft {questions.length} {questions.length === 1 ? 'vraag' : 'vragen'}. Voeg een
+        nieuwe vraag toe, of bewerk een bestaande vraag.
       </FormHelperText>
 
       <Box height={8} />
 
-      {currentRound.questions.map((question, index) => {
+      {questions.map((question, index) => {
         return (
           <Box pb={4}>
             <Card key={question.id} isSmall borderColor="gray.200">
@@ -82,7 +97,12 @@ export const RoundQuestions = () => {
                 <Text fontSize="xl" fontWeight="700">
                   Vraag {index + 1}
                 </Text>
-                <IconButton aria-label="Vraag verwijderen" icon="delete" variant="ghost" />
+                <IconButton
+                  onClick={() => handleRemoveQuestion(question.id)}
+                  aria-label="Vraag verwijderen"
+                  icon="delete"
+                  variant="ghost"
+                />
               </Flex>
               <Box height={4} />
               <FormControl>

@@ -1,5 +1,9 @@
 import React from 'react';
-import { FirebaseFirestore, QueryDocumentSnapshot } from '@firebase/firestore-types';
+import {
+  FirebaseFirestore,
+  QueryDocumentSnapshot,
+  CollectionReference,
+} from '@firebase/firestore-types';
 
 import { db } from '../utils/firebase';
 
@@ -21,6 +25,45 @@ export function useFirestore() {
   }
 
   return context;
+}
+
+interface QueryOptions {
+  rawData?: boolean;
+}
+
+export function useCollectionOnce<T>(
+  collectionRef: CollectionReference<T>,
+  options?: QueryOptions,
+) {
+  const [reference] = React.useState(collectionRef);
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | undefined>(undefined);
+  const [data, setData] = React.useState<QueryDocumentSnapshot[] | T[] | undefined>(undefined);
+
+  React.useEffect(() => {
+    setLoading(true);
+
+    async function getData() {
+      await reference.get().then(querySnapshot => {
+        setLoading(false);
+
+        if (options?.rawData) {
+          setData(querySnapshot.docs);
+        } else {
+          const documentData = querySnapshot.docs.map(document => document.data());
+
+          setData(documentData);
+        }
+      });
+    }
+
+    getData();
+  }, [reference]);
+
+  return {
+    data,
+    loading,
+  };
 }
 
 /*

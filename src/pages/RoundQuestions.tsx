@@ -14,11 +14,13 @@ import {
 import { useParams } from 'react-router-dom';
 
 import { useQuestions, useRounds } from '../context/roundsContext';
+import { useFirestore, useCollectionOnce } from '../context/firebaseContext';
+
 import { RouterButton } from '../components/RouterButton';
 import { Card } from '../components/Card';
 
 import { QuestionInput } from '../types/question';
-import { useFirestore, useCollectionOnce } from '../context/firebaseContext';
+import { Collection } from '../types/collections';
 
 export const RoundQuestions = () => {
   const { roundNumber } = useParams();
@@ -27,8 +29,8 @@ export const RoundQuestions = () => {
   const db = useFirestore();
 
   const tempRoundId = '9SflvV4BfmrWYvi6tJT9';
-  // const questionsRef = db.collection('rounds').doc(tempRoundId).collection('questions');
-  const questionsRef = db.collection(`rounds/${tempRoundId}/questions`);
+  // const questionsRef = db.collection(Collection.ROUNDS).doc(tempRoundId).collection(Collection.QUESTIONS);
+  const questionsRef = db.collection(`${Collection.ROUNDS}/${tempRoundId}/${Collection.QUESTIONS}`);
   const { data, loading } = useCollectionOnce(questionsRef);
 
   console.log('loading in questions', loading);

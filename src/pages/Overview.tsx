@@ -8,20 +8,20 @@ import { RouterButton } from '../components/RouterButton';
 import { RoundList } from '../components/RoundList';
 
 import { User } from '../types/user';
-import { Round } from '../types/round';
+import { useRounds } from '../context/roundsContext';
 
 interface OverviewProps {
   user?: User;
-  rounds?: Round[];
 }
 
 interface UserData {
   name: string;
 }
 
-export const Overview = ({ user, rounds }: OverviewProps) => {
+export const Overview = ({ user }: OverviewProps) => {
   const match = useRouteMatch();
   const { loading, error, documents } = useGetFromFirestore('users');
+  const { rounds } = useRounds();
 
   const users = documents
     ? documents.map(doc => {

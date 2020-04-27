@@ -2,14 +2,11 @@ import React from 'react';
 import { Text } from '@chakra-ui/core';
 
 import { RoundList } from '../components/RoundList';
+import { useRounds } from '../context/roundsContext';
 
-import { Round } from '../types/round';
+export const Dashboard = () => {
+  const { rounds } = useRounds();
 
-interface DashboardProps {
-  rounds: Round[];
-}
-
-export const Dashboard = ({ rounds }: DashboardProps) => {
   return (
     <div>
       <Text as="h1" fontSize="2xl">

@@ -15,13 +15,16 @@ import {
   Checkbox,
   Stack,
   FormHelperText,
+  Alert,
+  AlertIcon,
 } from '@chakra-ui/core';
-import { useRouteMatch } from 'react-router-dom';
+import { useRouteMatch, useParams } from 'react-router-dom';
 
 import { RouterButton } from '../components/RouterButton';
 
 export const RoundSettings = () => {
   const match = useRouteMatch();
+  const { roundNumber } = useParams();
 
   const [closeAlertOpen, setCloseAlertOpen] = React.useState(false);
   const cancelRef = React.useRef<HTMLButtonElement>(null);
@@ -45,7 +48,7 @@ export const RoundSettings = () => {
       <Box height={4} />
 
       <Text as="h1" fontSize="2xl">
-        Ronde # instellingen
+        Ronde {roundNumber}
       </Text>
 
       <Box height={4} />
@@ -60,11 +63,19 @@ export const RoundSettings = () => {
 
       <Box height={8} />
 
+      {/* TODO: if closed */}
+      <Alert status="info">
+        <AlertIcon />
+        Let op: Deze ronde is gemarkeerd als afgelopen.
+      </Alert>
+
+      <Box height={8} />
+
       <Stack spacing={4}>
-        <RouterButton to={`${match.path}/questions`} variantColor="purple">
+        <RouterButton to={`${match.url}/questions`} variantColor="purple">
           Vragen toevoegen / wijzigen
         </RouterButton>
-        <RouterButton to={`${match.path}/answersheets`} variantColor="purple">
+        <RouterButton to={`${match.url}/answersheets`} variantColor="purple">
           Ronde nakijken
         </RouterButton>
       </Stack>

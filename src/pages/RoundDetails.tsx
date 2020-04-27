@@ -4,14 +4,11 @@ import { Text, Box } from '@chakra-ui/core';
 
 import { Question } from '../components/Question';
 
-import { Round } from '../types/round';
+import { useRounds } from '../context/roundsContext';
 
-interface RoundDetailsProps {
-  rounds: Round[];
-}
-
-export const RoundDetails = ({ rounds }: RoundDetailsProps) => {
+export const RoundDetails = () => {
   const { roundNumber } = useParams();
+  const { rounds } = useRounds();
   const currentRound = rounds[Number(roundNumber) - 1];
 
   return (

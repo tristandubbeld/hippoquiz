@@ -1,5 +1,11 @@
 export interface Question {
   id: string;
   title?: string;
-  isAnswered?: boolean;
+  type: 'text' | 'select';
+  isAnswered?: boolean; // todo: remove and move to Answer
+}
+
+export interface QuestionInput {
+  title?: string;
+  type: 'text' | 'select';
 }

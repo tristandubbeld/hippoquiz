@@ -13,6 +13,7 @@ import {
   Spinner,
 } from '@chakra-ui/core';
 import { CollectionReference } from '@firebase/firestore-types';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { useQuestions } from '../context/roundsContext';
 import {
@@ -108,57 +109,66 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
 
   return (
     <React.Fragment>
-      {questions &&
-        questions.map((question, index) => {
-          return (
-            <Box key={question.id} pb={4}>
-              <Card isSmall borderColor="gray.200">
-                <Flex align="center" justify="space-between">
-                  <Text fontSize="xl" fontWeight="700">
-                    Vraag {index + 1}
-                  </Text>
-                  <IconButton
-                    onClick={() => handleRemoveQuestion(question.id)}
-                    isLoading={question.id === removingId}
-                    aria-label="Vraag verwijderen"
-                    icon="delete"
-                    variant="ghost"
-                  />
-                </Flex>
-                <Box height={4} />
-                <FormControl>
-                  <FormLabel>Type vraag</FormLabel>
-                  <Select
-                    onChange={handleTypeChange}
-                    value={question.type}
-                    isDisabled={question.id === removingId}>
-                    <option value="text">Tekstveld</option>
-                    <option value="select">Meerkeuze</option>
-                  </Select>
-                </FormControl>
-                {question.type === 'select' && (
-                  <Box pt={4}>
-                    <FormLabel>Hoeveel keuzes?</FormLabel>
-                    <Stack align="center" isInline>
-                      <Flex
-                        align="center"
-                        flexGrow={1}
-                        height={10}
-                        px={4}
-                        border="1px"
-                        borderRadius="md"
-                        borderColor="gray.200">
-                        6
-                      </Flex>
-                      <IconButton aria-label="minder" icon="minus" />
-                      <IconButton aria-label="meer" icon="add" />
-                    </Stack>
-                  </Box>
-                )}
-              </Card>
-            </Box>
-          );
-        })}
+      <AnimatePresence>
+        {questions &&
+          questions.map((question, index) => {
+            return (
+              <motion.div
+                key={question.id}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                style={{ overflow: 'hidden' }}>
+                <Box pb={4}>
+                  <Card isSmall borderColor="gray.200">
+                    <Flex align="center" justify="space-between">
+                      <Text fontSize="xl" fontWeight="700">
+                        Vraag {index + 1}
+                      </Text>
+                      <IconButton
+                        onClick={() => handleRemoveQuestion(question.id)}
+                        isLoading={question.id === removingId}
+                        aria-label="Vraag verwijderen"
+                        icon="delete"
+                        variant="ghost"
+                      />
+                    </Flex>
+                    <Box height={4} />
+                    <FormControl>
+                      <FormLabel>Type vraag</FormLabel>
+                      <Select
+                        onChange={handleTypeChange}
+                        value={question.type}
+                        isDisabled={question.id === removingId}>
+                        <option value="text">Tekstveld</option>
+                        <option value="select">Meerkeuze</option>
+                      </Select>
+                    </FormControl>
+                    {question.type === 'select' && (
+                      <Box pt={4}>
+                        <FormLabel>Hoeveel keuzes?</FormLabel>
+                        <Stack align="center" isInline>
+                          <Flex
+                            align="center"
+                            flexGrow={1}
+                            height={10}
+                            px={4}
+                            border="1px"
+                            borderRadius="md"
+                            borderColor="gray.200">
+                            6
+                          </Flex>
+                          <IconButton aria-label="minder" icon="minus" />
+                          <IconButton aria-label="meer" icon="add" />
+                        </Stack>
+                      </Box>
+                    )}
+                  </Card>
+                </Box>
+              </motion.div>
+            );
+          })}
+      </AnimatePresence>
 
       {newQuestion && (
         <Card isSmall borderColor="gray.200">

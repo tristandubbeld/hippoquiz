@@ -18,13 +18,12 @@ import {
   Alert,
   AlertIcon,
 } from '@chakra-ui/core';
-import { useRouteMatch, useParams } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 
 import { RouterButton } from '../components/RouterButton';
 
 export const RoundSettings = () => {
   const match = useRouteMatch();
-  const { roundNumber } = useParams();
 
   const [closeAlertOpen, setCloseAlertOpen] = React.useState(false);
   const cancelRef = React.useRef<HTMLButtonElement>(null);
@@ -48,7 +47,7 @@ export const RoundSettings = () => {
       <Box height={4} />
 
       <Text as="h1" fontSize="2xl">
-        Ronde {roundNumber}
+        Ronde instellingen
       </Text>
 
       <Box height={4} />

@@ -2,13 +2,15 @@ import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { Text, Box, Spinner, Flex, Badge } from '@chakra-ui/core';
 
-import { useGetFromFirestore } from '../context/firebaseContext';
+import { useGetFromFirestore, useCollectionDataOnce } from '../context/firebaseContext';
 import { RouterLink } from '../components/RouterLink';
 import { RouterButton } from '../components/RouterButton';
 import { RoundList } from '../components/RoundList';
+import { useRounds } from '../context/roundsContext';
 
 import { User } from '../types/user';
-import { useRounds } from '../context/roundsContext';
+import { Round } from '../types/round';
+import { roundsRef } from '../utils/references';
 
 interface OverviewProps {
   user?: User;
@@ -19,9 +21,17 @@ interface UserData {
 }
 
 export const Overview = ({ user }: OverviewProps) => {
+  const { rounds, updateRounds } = useRounds();
+  const { data: initialRounds, loading: roundsLoading } = useCollectionDataOnce<Round>(roundsRef);
   const match = useRouteMatch();
+
+  React.useEffect(() => {
+    if (rounds.length === 0 && initialRounds) {
+      updateRounds(initialRounds);
+    }
+  }, [rounds, initialRounds, updateRounds]);
+
   const { loading, error, documents } = useGetFromFirestore('users');
-  const { rounds } = useRounds();
 
   const users = documents
     ? documents.map(doc => {
@@ -68,7 +78,7 @@ export const Overview = ({ user }: OverviewProps) => {
 
       <Box height={4} />
 
-      <RoundList rounds={rounds} />
+      {roundsLoading ? <Spinner /> : <RoundList rounds={rounds} />}
 
       <Box height={8} />
 

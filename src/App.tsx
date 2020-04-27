@@ -54,16 +54,16 @@ const QuizPages = () => {
         <Route path={`${match.path}/scoreboard`} exact>
           <ScoreBoard />
         </Route>
-        <Route path={`${match.path}/round/:roundNumber`} exact>
+        <Route path={`${match.path}/round/:roundId`} exact>
           <RoundDetails />
         </Route>
         <Route path={`${match.path}/dashboard`} exact>
           <Dashboard />
         </Route>
-        <Route path={`${match.path}/dashboard/round/:roundNumber`} exact>
+        <Route path={`${match.path}/dashboard/round/:roundId`} exact>
           <RoundSettings />
         </Route>
-        <Route path={`${match.path}/dashboard/round/:roundNumber/questions`} exact>
+        <Route path={`${match.path}/dashboard/round/:roundId/questions`} exact>
           <RoundQuestions />
         </Route>
         <Route path={`${match.path}/*`}>

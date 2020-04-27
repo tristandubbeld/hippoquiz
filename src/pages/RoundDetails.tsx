@@ -7,9 +7,11 @@ import { Question } from '../components/Question';
 import { useRounds } from '../context/roundsContext';
 
 export const RoundDetails = () => {
-  const { roundNumber } = useParams();
+  const { roundId } = useParams();
   const { rounds } = useRounds();
-  const currentRound = rounds[Number(roundNumber) - 1];
+
+  const currentRound = rounds.find(round => round.id === roundId);
+  const roundNumber = rounds.findIndex(round => round.id === roundId) + 1;
 
   return (
     <div>

@@ -1,11 +1,23 @@
 import React from 'react';
-import { Text } from '@chakra-ui/core';
+import { Text, Spinner } from '@chakra-ui/core';
 
 import { RoundList } from '../components/RoundList';
 import { useRounds } from '../context/roundsContext';
+import { useCollectionDataOnce } from '../context/firebaseContext';
+
+import { roundsRef } from '../utils/references';
+
+import { Round } from '../types/round';
 
 export const Dashboard = () => {
-  const { rounds } = useRounds();
+  const { rounds, updateRounds } = useRounds();
+  const { data: initialRounds, loading: roundsLoading } = useCollectionDataOnce<Round>(roundsRef);
+
+  React.useEffect(() => {
+    if (rounds.length === 0 && initialRounds) {
+      updateRounds(initialRounds);
+    }
+  }, [rounds, initialRounds, updateRounds]);
 
   return (
     <div>
@@ -15,7 +27,7 @@ export const Dashboard = () => {
       <Text as="h2" fontSize="xl">
         Rounds
       </Text>
-      <RoundList rounds={rounds} />
+      {roundsLoading ? <Spinner /> : <RoundList rounds={rounds} />}
     </div>
   );
 };

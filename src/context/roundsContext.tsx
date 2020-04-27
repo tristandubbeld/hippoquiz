@@ -16,23 +16,8 @@ interface RoundsState {
 
 const RoundsContext = React.createContext<RoundsState | undefined>(undefined);
 
-const dummy: Round[] = [
-  {
-    id: '1',
-    name: 'Vragen ronde',
-    questions: [],
-    isClosed: false,
-  },
-  {
-    id: '2',
-    name: 'Kazen ronde',
-    questions: [],
-    isClosed: false,
-  },
-];
-
 export const RoundsProvider: React.FC = ({ children }) => {
-  const [rounds, setRounds] = React.useState<Round[]>(dummy);
+  const [rounds, setRounds] = React.useState<Round[]>([]);
 
   const updateRounds = (newRounds: Round[]) => {
     // removes rounds that don't exist in firestore anymore
@@ -59,7 +44,7 @@ export const RoundsProvider: React.FC = ({ children }) => {
   const updateRound = (updatedRound: Round) => {
     // updates round that needs to be updated
     const updatedRounds = rounds.map(round => {
-      // ifround that needs to be updated is found
+      // if round that needs to be updated is found
       if (round.id === updatedRound.id) {
         // return updated round
         return updatedRound;
@@ -105,9 +90,18 @@ export const RoundsProvider: React.FC = ({ children }) => {
   const addQuestion = (roundId: string, question: Question) => {
     const updatedRounds = rounds.map(round => {
       if (round.id === roundId) {
+        const existingQuestions = round.questions;
+
+        if (existingQuestions) {
+          return {
+            ...round,
+            questions: [...existingQuestions, question],
+          };
+        }
+
         return {
           ...round,
-          questions: [...round.questions, question],
+          questions: [question],
         };
       }
 

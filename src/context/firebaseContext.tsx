@@ -27,18 +27,11 @@ export function useFirestore() {
   return context;
 }
 
-interface QueryOptions {
-  rawData?: boolean;
-}
-
-export function useCollectionOnce<T>(
-  collectionRef: CollectionReference<T>,
-  options?: QueryOptions,
-) {
+export function useCollectionDataOnce<T>(collectionRef: CollectionReference<T>) {
   const [reference] = React.useState(collectionRef);
   const [loading, setLoading] = React.useState<boolean>(false);
-  const [error, setError] = React.useState<string | undefined>(undefined);
-  const [data, setData] = React.useState<QueryDocumentSnapshot[] | T[] | undefined>(undefined);
+  // const [error, setError] = React.useState<string | undefined>(undefined);
+  const [data, setData] = React.useState<T[] | undefined>(undefined);
 
   React.useEffect(() => {
     setLoading(true);
@@ -47,13 +40,12 @@ export function useCollectionOnce<T>(
       await reference.get().then(querySnapshot => {
         setLoading(false);
 
-        if (options?.rawData) {
-          setData(querySnapshot.docs);
-        } else {
-          const documentData = querySnapshot.docs.map(document => document.data());
+        const documentData = querySnapshot.docs.map(document => ({
+          id: document.id,
+          ...document.data(),
+        }));
 
-          setData(documentData);
-        }
+        setData(documentData);
       });
     }
 
@@ -65,6 +57,33 @@ export function useCollectionOnce<T>(
     loading,
   };
 }
+
+export function useAddDocument<T>(collectionRef: CollectionReference) {
+  const [loading, setLoading] = React.useState(false);
+
+  async function addDocument(data: T) {
+    setLoading(true);
+
+    const promise = await collectionRef.add(data).then(documentRef => {
+      setLoading(false);
+
+      return documentRef.id;
+    });
+
+    return promise;
+  }
+
+  return {
+    loading,
+    addDocument,
+  };
+}
+
+// export function useUpdateDocument(
+//   documentRef, key: string, value
+// ) {
+
+// }
 
 /*
  * Custom useSaveToFirestore hook

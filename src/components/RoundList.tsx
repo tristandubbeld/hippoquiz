@@ -22,9 +22,10 @@ export const RoundList = ({ rounds }: RoundListProps) => {
         {rounds &&
           rounds.map((round, index) => {
             const roundNumber = index + 1;
+            const roundId = round.id;
 
             return (
-              <RouterLink key={round.id} to={`${match.url}/round/${roundNumber}`}>
+              <RouterLink key={round.id} to={`${match.url}/round/${roundId}`}>
                 <Card isSmall borderColor={round.isClosed ? 'green.500' : undefined}>
                   <Flex direction="row" align="center" justify="space-between">
                     <Text isTruncated color={round.isClosed ? 'green.500' : undefined}>

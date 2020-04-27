@@ -121,9 +121,7 @@ export const RoundsProvider: React.FC = ({ children }) => {
     const updatedRounds = rounds.map(round => {
       if (round.id === roundId) {
         const updatedQuestions = round.questions.filter(question => {
-          if (question.id !== questionId) {
-            return question;
-          }
+          return question.id !== questionId;
         });
 
         return {

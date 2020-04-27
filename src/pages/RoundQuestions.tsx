@@ -9,11 +9,6 @@ import {
   FormLabel,
   Flex,
   FormHelperText,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   Stack,
 } from '@chakra-ui/core';
 import { useParams } from 'react-router-dom';

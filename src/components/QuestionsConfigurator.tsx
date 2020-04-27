@@ -83,7 +83,7 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
         setNewQuestion({ type: 'text' });
       })
       .catch(err => {
-        console.log('err', err);
+        console.log(err);
       });
   };
 

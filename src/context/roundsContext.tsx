@@ -114,6 +114,12 @@ export const RoundsProvider: React.FC = ({ children }) => {
   const removeQuestion = (roundId: string, questionId: string) => {
     const updatedRounds = rounds.map(round => {
       if (round.id === roundId) {
+        if (!round.questions) {
+          console.log('Tried removing a question that does not exist');
+
+          return round;
+        }
+
         const updatedQuestions = round.questions.filter(question => {
           return question.id !== questionId;
         });

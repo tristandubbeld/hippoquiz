@@ -23,8 +23,10 @@ export const RoundDetails = () => {
         Vul hier je antwoorden in voor ronde {roundNumber}. Als je een antwoord goed denkt te hebben
         kun je deze verzenden door op de paarse knop te drukken*.
       </Text>
+
       <Box height={8} />
-      {currentRound &&
+
+      {currentRound && currentRound.questions ? (
         currentRound.questions.map((question, index) => {
           return (
             <Question
@@ -34,7 +36,10 @@ export const RoundDetails = () => {
               index={index}
             />
           );
-        })}
+        })
+      ) : (
+        <div>No questions found</div>
+      )}
       <Box height={4} />
       <Text>
         *) Wanneer je een antwoord verzonden hebt, kun je het eventueel nog veranderen tot de ronde

@@ -7,7 +7,7 @@ import { theme } from './theme';
 
 import { Landing } from './pages/Landing';
 import { Overview } from './pages/Overview';
-import { RoundDetails } from './pages/RoundDetails';
+import { RoundAnswers } from './pages/RoundAnswers';
 import { ScoreBoard } from './pages/Scoreboard';
 import { Dashboard } from './pages/Dashboard';
 import { RoundSettings } from './pages/RoundSettings';
@@ -55,7 +55,7 @@ const QuizPages = () => {
           <ScoreBoard />
         </Route>
         <Route path={`${match.path}/round/:roundId`} exact>
-          <RoundDetails />
+          <RoundAnswers />
         </Route>
         <Route path={`${match.path}/dashboard`} exact>
           <Dashboard />

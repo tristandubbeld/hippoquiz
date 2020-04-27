@@ -85,6 +85,29 @@ export function useAddDocument<T>(collectionRef: CollectionReference) {
 
 // }
 
+export function useRemoveDocument(collectionRef: CollectionReference) {
+  // removingId is the loading state
+  const [removingId, setRemovingId] = React.useState<string | undefined>(undefined);
+
+  async function removeDocument(documentId: string) {
+    setRemovingId(documentId);
+
+    const promise = await collectionRef
+      .doc(documentId)
+      .delete()
+      .then(() => {
+        setRemovingId(undefined);
+      });
+
+    return promise;
+  }
+
+  return {
+    removingId,
+    removeDocument,
+  };
+}
+
 /*
  * Custom useSaveToFirestore hook
  */

@@ -15,7 +15,12 @@ import {
 import { CollectionReference } from '@firebase/firestore-types';
 
 import { useQuestions } from '../context/roundsContext';
-import { useFirestore, useAddDocument, useCollectionDataOnce } from '../context/firebaseContext';
+import {
+  useFirestore,
+  useAddDocument,
+  useRemoveDocument,
+  useCollectionDataOnce,
+} from '../context/firebaseContext';
 
 import { Card } from './Card';
 
@@ -38,6 +43,7 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
     .collection(Collection.QUESTIONS) as CollectionReference<Question>;
 
   const { loading: addLoading, addDocument } = useAddDocument<QuestionInput>(questionsRef);
+  const { removingId, removeDocument } = useRemoveDocument(questionsRef);
 
   const [questions, setQuestions] = React.useState<Question[]>([]);
   const { data: initialQuestions, loading: questionsLoading } = useCollectionDataOnce<Question>(
@@ -82,13 +88,16 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
   };
 
   const handleRemoveQuestion = (questionId: string) => {
-    setQuestions(questions => {
-      const updatedQuestions = questions.filter(question => {
-        return question.id !== questionId;
-      });
+    removeDocument(questionId).then(() => {
+      setQuestions(questions => {
+        const updatedQuestions = questions.filter(question => {
+          return question.id !== questionId;
+        });
 
-      return updatedQuestions;
+        return updatedQuestions;
+      });
     });
+
     // TODO: check if we still need to do this
     // removeQuestion(roundId, questionId);
   };
@@ -110,6 +119,7 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
                   </Text>
                   <IconButton
                     onClick={() => handleRemoveQuestion(question.id)}
+                    isLoading={question.id === removingId}
                     aria-label="Vraag verwijderen"
                     icon="delete"
                     variant="ghost"
@@ -118,7 +128,10 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
                 <Box height={4} />
                 <FormControl>
                   <FormLabel>Type vraag</FormLabel>
-                  <Select onChange={handleTypeChange} value={question.type}>
+                  <Select
+                    onChange={handleTypeChange}
+                    value={question.type}
+                    isDisabled={question.id === removingId}>
                     <option value="text">Tekstveld</option>
                     <option value="select">Meerkeuze</option>
                   </Select>

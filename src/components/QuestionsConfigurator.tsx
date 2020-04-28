@@ -34,7 +34,7 @@ interface QuestionsConfiguratorProps {
 
 export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) => {
   const { questions, addQuestion, updateQuestions, removeQuestion } = useQuestions(roundId);
-  const [newQuestion, setNewQuestion] = React.useState<QuestionInput>({ type: 'text' });
+  const [newQuestion, setNewQuestion] = React.useState<QuestionInput>({ type: 'text', options: 1 });
 
   const db = useFirestore();
 
@@ -45,7 +45,6 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
 
   const { loading: addLoading, addDocument } = useAddDocument<QuestionInput>(questionsRef);
   const { removingId, removeDocument } = useRemoveDocument(questionsRef);
-
   const { loading: questionsLoading, getCollectionData } = useCollectionDataOnce<Question>(
     questionsRef,
   );
@@ -62,15 +61,51 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
     }
   }, [questions, getCollectionData, updateQuestions, roundId]);
 
-  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleTypeChange = () => {
+    console.log('handle type change');
+  };
+
+  const handleNewQuestionTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const type = e.target.value as 'text' | 'select';
 
-    setNewQuestion(question => {
-      return {
-        ...question,
-        type,
-      };
-    });
+    if (type === 'text') {
+      setNewQuestion(question => {
+        return {
+          ...question,
+          type,
+        };
+      });
+    }
+
+    if (type === 'select') {
+      setNewQuestion(question => {
+        return {
+          ...question,
+          type,
+          options: 4,
+        };
+      });
+    }
+  };
+
+  const handleNewQuestionAmountChange = (operation: 'add' | 'subtract') => {
+    if (operation === 'add') {
+      setNewQuestion(question => {
+        return {
+          ...question,
+          options: question.options + 1,
+        };
+      });
+    }
+
+    if (operation === 'subtract') {
+      setNewQuestion(question => {
+        return {
+          ...question,
+          options: question.options - 1,
+        };
+      });
+    }
   };
 
   const handleAddQuestion = () => {
@@ -79,7 +114,7 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
         addQuestion(roundId, { id: questionId, ...newQuestion });
 
         // re-initialize newQuestion
-        setNewQuestion({ type: 'text' });
+        setNewQuestion({ type: 'text', options: 1 });
       })
       .catch(err => {
         console.log(err);
@@ -146,7 +181,7 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
                             border="1px"
                             borderRadius="md"
                             borderColor="gray.200">
-                            6
+                            {question.options}
                           </Flex>
                           <IconButton aria-label="minder" icon="minus" />
                           <IconButton aria-label="meer" icon="add" />
@@ -172,7 +207,7 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
           </FormHelperText>
           <Box height={4} />
           <FormControl>
-            <Select onChange={handleTypeChange} value={newQuestion.type}>
+            <Select onChange={handleNewQuestionTypeChange} value={newQuestion.type}>
               <option value="text">Open vraag</option>
               <option value="select">Meerkeuze vraag</option>
             </Select>
@@ -190,10 +225,20 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
                   border="1px"
                   borderRadius="md"
                   borderColor="gray.200">
-                  6
+                  {newQuestion.options}
                 </Flex>
-                <IconButton aria-label="minder" icon="minus" />
-                <IconButton aria-label="meer" icon="add" />
+                <IconButton
+                  onClick={() => handleNewQuestionAmountChange('subtract')}
+                  isDisabled={newQuestion.options === 2}
+                  aria-label="minder"
+                  icon="minus"
+                />
+                <IconButton
+                  onClick={() => handleNewQuestionAmountChange('add')}
+                  isDisabled={newQuestion.options === 8}
+                  aria-label="meer"
+                  icon="add"
+                />
               </Stack>
               <FormHelperText>
                 Maximaal 8 antwoorden mogelijk. Antwoorden worden getoond als A tot en met H.

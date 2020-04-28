@@ -38,7 +38,7 @@ export const Overview = ({ user }: OverviewProps) => {
     if (!rounds) {
       fetchRounds();
     }
-  }, [rounds]);
+  }, [rounds, getCollectionData, updateRounds]);
 
   React.useEffect(() => {
     const fetchUsers = async () => {
@@ -50,7 +50,7 @@ export const Overview = ({ user }: OverviewProps) => {
     if (!users) {
       fetchUsers();
     }
-  }, [users]);
+  }, [users, getUsersCollectionData, updateUsers]);
 
   if (!user) {
     return (

@@ -60,7 +60,7 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
     if (!questions) {
       fetchQuestions();
     }
-  }, [questions]);
+  }, [questions, getCollectionData, updateQuestions, roundId]);
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const type = e.target.value as 'text' | 'select';

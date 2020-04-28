@@ -38,7 +38,7 @@ export const QuestionList = ({ roundId, isClosed = false }: QuestionListProps) =
     if (!questions) {
       fetchQuestions();
     }
-  }, [questions]);
+  }, [questions, getCollectionData, updateQuestions, roundId]);
 
   if (questionsLoading) {
     return <Spinner />;

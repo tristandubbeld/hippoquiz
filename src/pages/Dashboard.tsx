@@ -31,7 +31,7 @@ export const Dashboard = () => {
     if (!rounds) {
       fetchRounds();
     }
-  }, [rounds]);
+  }, [rounds, getCollectionData, updateRounds]);
 
   React.useEffect(() => {
     const fetchUsers = async () => {
@@ -43,7 +43,7 @@ export const Dashboard = () => {
     if (!users) {
       fetchUsers();
     }
-  }, [users]);
+  }, [users, getUserCollectionData, updateUsers]);
 
   const handleAddRound = () => {
     addDocument({})

@@ -83,6 +83,7 @@ export const Overview = ({ user }: OverviewProps) => {
       ) : (
         <React.Fragment>
           <Text>Klik op een ronde hieronder om je antwoorden in te vullen.</Text>
+          <Box height={4} />
           <RoundList rounds={rounds} />
         </React.Fragment>
       )}

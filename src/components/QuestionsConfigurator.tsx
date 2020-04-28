@@ -122,7 +122,7 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
                 <Box pb={4}>
                   <Card isSmall borderColor="gray.200">
                     <Flex align="center" justify="space-between">
-                      <Text fontSize="xl" fontWeight="700">
+                      <Text fontSize="lg" fontWeight="700" color="purple.900">
                         Vraag {index + 1}
                       </Text>
                       <IconButton
@@ -133,15 +133,16 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
                         variant="ghost"
                       />
                     </Flex>
-                    <Box height={4} />
+
+                    <Box height={2} />
+
                     <FormControl>
-                      <FormLabel>Type vraag</FormLabel>
                       <Select
                         onChange={handleTypeChange}
                         value={question.type}
                         isDisabled={question.id === removingId}>
-                        <option value="text">Tekstveld</option>
-                        <option value="select">Meerkeuze</option>
+                        <option value="text">Open vraag</option>
+                        <option value="select">Meerkeuze vraag</option>
                       </Select>
                     </FormControl>
                     {question.type === 'select' && (
@@ -173,7 +174,7 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
       {newQuestion && (
         <Card isSmall borderColor="gray.200">
           <Flex align="center" height={10}>
-            <Text fontSize="xl" fontWeight="700" color="purple.900">
+            <Text fontSize="lg" fontWeight="700" color="purple.900">
               Nieuwe vraag
             </Text>
           </Flex>
@@ -182,10 +183,9 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
           </FormHelperText>
           <Box height={4} />
           <FormControl>
-            <FormLabel>Type vraag</FormLabel>
             <Select onChange={handleTypeChange} value={newQuestion.type}>
-              <option value="text">Tekstveld</option>
-              <option value="select">Meerkeuze</option>
+              <option value="text">Open vraag</option>
+              <option value="select">Meerkeuze vraag</option>
             </Select>
           </FormControl>
 

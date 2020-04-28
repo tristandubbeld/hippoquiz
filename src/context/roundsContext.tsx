@@ -77,40 +77,48 @@ export const RoundsProvider: React.FC = ({ children }) => {
   };
 
   const updateQuestions = (roundId: string, questions: Question[]) => {
-    const updatedRounds = rounds?.map(round => {
-      if (round.id === roundId) {
-        return {
-          ...round,
-          questions: questions,
-        };
-      }
-
-      return round;
-    });
-
-    setRounds(updatedRounds);
-  };
-
-  const addQuestion = (roundId: string, question: Question) => {
-    const updatedRounds = rounds?.map(round => {
-      if (round.id === roundId) {
-        if (round.questions) {
+    if (rounds) {
+      const updatedRounds = rounds.map(round => {
+        if (round.id === roundId) {
           return {
             ...round,
-            questions: [...round.questions, question],
+            questions: questions,
           };
         }
 
-        return {
-          ...round,
-          questions: [question],
-        };
-      }
+        return round;
+      });
 
-      return round;
-    });
+      setRounds(updatedRounds);
+    } else {
+      setRounds([{ id: roundId, questions }]);
+    }
+  };
 
-    setRounds(updatedRounds);
+  const addQuestion = (roundId: string, question: Question) => {
+    if (rounds) {
+      const updatedRounds = rounds.map(round => {
+        if (round.id === roundId) {
+          if (round.questions) {
+            return {
+              ...round,
+              questions: [...round.questions, question],
+            };
+          }
+
+          return {
+            ...round,
+            questions: [question],
+          };
+        }
+
+        return round;
+      });
+
+      setRounds(updatedRounds);
+    } else {
+      setRounds([{ id: roundId, questions: [question] }]);
+    }
   };
 
   const removeQuestion = (roundId: string, questionId: string) => {

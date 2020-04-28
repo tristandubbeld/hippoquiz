@@ -1,39 +1,15 @@
 import React from 'react';
-import { Box, Text, FormHelperText, Spinner } from '@chakra-ui/core';
+import { Box, Text, FormHelperText } from '@chakra-ui/core';
 import { useParams } from 'react-router-dom';
-
-import { useRounds } from '../context/roundsContext';
-import { useCollectionDataOnce } from '../context/firebaseContext';
 
 import { RouterButton } from '../components/RouterButton';
 import { QuestionsConfigurator } from '../components/QuestionsConfigurator';
 
-import { roundsRef } from '../utils/references';
-import { Round } from '../types/round';
-
 export const RoundQuestions = () => {
   const { roundId } = useParams();
-  const { rounds, updateRounds } = useRounds();
-  const { data: initialRounds, loading: roundsLoading } = useCollectionDataOnce<Round>(roundsRef);
-
-  React.useEffect(() => {
-    if (rounds.length === 0 && initialRounds) {
-      updateRounds(initialRounds);
-    }
-  }, [rounds, initialRounds, updateRounds]);
-
-  const currentRound = rounds.find(round => round.id === roundId);
 
   if (!roundId) {
     return <div>404</div>;
-  }
-
-  if (!roundsLoading && !currentRound) {
-    return <div>This round does not exist</div>;
-  }
-
-  if (roundsLoading) {
-    return <Spinner />;
   }
 
   return (

@@ -10,8 +10,8 @@ import { QuestionList } from '../components/QuestionList';
 export const RoundAnswers = () => {
   const { roundId } = useParams();
   const { rounds } = useRounds();
-  const currentRound = rounds.find(round => round.id === roundId);
-  const roundNumber = rounds.findIndex(round => round.id === roundId) + 1;
+  const currentRound = rounds?.find(round => round.id === roundId);
+  const roundNumber = rounds ? rounds.findIndex(round => round.id === roundId) + 1 : '?';
 
   if (!roundId) {
     return <div>There is no round id for some reason</div>;

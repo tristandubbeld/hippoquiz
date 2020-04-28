@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Route, Switch, useRouteMatch } from 'react-rou
 import { ThemeProvider, CSSReset, Box } from '@chakra-ui/core';
 
 import { FirebaseProvider } from './context/firebaseContext';
-import { theme } from './theme';
+import { UsersProvider } from './context/usersContext';
+import { RoundsProvider } from './context/roundsContext';
 
 import { Landing } from './pages/Landing';
 import { Overview } from './pages/Overview';
@@ -11,10 +12,12 @@ import { RoundAnswers } from './pages/RoundAnswers';
 import { ScoreBoard } from './pages/Scoreboard';
 import { Dashboard } from './pages/Dashboard';
 import { RoundSettings } from './pages/RoundSettings';
-import { loadFromLocalStorage } from './utils/localStorage';
 import { RoundQuestions } from './pages/RoundQuestions';
+
+import { theme } from './theme';
+import { loadFromLocalStorage } from './utils/localStorage';
+
 import { User } from './types/user';
-import { RoundsProvider } from './context/roundsContext';
 
 function App() {
   return (
@@ -46,31 +49,33 @@ const QuizPages = () => {
   const { data: user } = loadFromLocalStorage<User>('user');
 
   return (
-    <RoundsProvider>
-      <Switch>
-        <Route path={`${match.path}`} exact>
-          <Overview user={user} />
-        </Route>
-        <Route path={`${match.path}/scoreboard`} exact>
-          <ScoreBoard />
-        </Route>
-        <Route path={`${match.path}/round/:roundId`} exact>
-          <RoundAnswers />
-        </Route>
-        <Route path={`${match.path}/dashboard`} exact>
-          <Dashboard />
-        </Route>
-        <Route path={`${match.path}/dashboard/round/:roundId`} exact>
-          <RoundSettings />
-        </Route>
-        <Route path={`${match.path}/dashboard/round/:roundId/questions`} exact>
-          <RoundQuestions />
-        </Route>
-        <Route path={`${match.path}/*`}>
-          <Box fontSize="2xl">404 not found</Box>
-        </Route>
-      </Switch>
-    </RoundsProvider>
+    <UsersProvider>
+      <RoundsProvider>
+        <Switch>
+          <Route path={`${match.path}`} exact>
+            <Overview user={user} />
+          </Route>
+          <Route path={`${match.path}/scoreboard`} exact>
+            <ScoreBoard />
+          </Route>
+          <Route path={`${match.path}/round/:roundId`} exact>
+            <RoundAnswers />
+          </Route>
+          <Route path={`${match.path}/dashboard`} exact>
+            <Dashboard />
+          </Route>
+          <Route path={`${match.path}/dashboard/round/:roundId`} exact>
+            <RoundSettings />
+          </Route>
+          <Route path={`${match.path}/dashboard/round/:roundId/questions`} exact>
+            <RoundQuestions />
+          </Route>
+          <Route path={`${match.path}/*`}>
+            <Box fontSize="2xl">404 not found</Box>
+          </Route>
+        </Switch>
+      </RoundsProvider>
+    </UsersProvider>
   );
 };
 

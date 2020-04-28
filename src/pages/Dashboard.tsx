@@ -1,9 +1,10 @@
 import React from 'react';
 import { Text, Spinner, Box, Button, FormHelperText, Badge } from '@chakra-ui/core';
 
-import { RoundList } from '../components/RoundList';
 import { useRounds } from '../context/roundsContext';
+import { useUsers } from '../context/usersContext';
 import { useCollectionDataOnce, useAddDocument } from '../context/firebaseContext';
+import { RoundList } from '../components/RoundList';
 
 import { roundsRef, userRef } from '../utils/references';
 
@@ -13,15 +14,36 @@ import { RouterButton } from '../components/RouterButton';
 
 export const Dashboard = () => {
   const { rounds, updateRounds, addRound } = useRounds();
-  const { data: initialRounds, loading: roundsLoading } = useCollectionDataOnce<Round>(roundsRef);
-  const { data: initialUsers, loading: usersLoading } = useCollectionDataOnce<User>(userRef);
+  const { users, updateUsers } = useUsers();
+  const { loading: roundsLoading, getCollectionData } = useCollectionDataOnce<Round>(roundsRef);
+  const { loading: usersLoading, getCollectionData: getUserCollectionData } = useCollectionDataOnce<
+    User
+  >(userRef);
   const { loading: addLoading, addDocument } = useAddDocument<RoundInput>(roundsRef);
 
   React.useEffect(() => {
-    if (rounds.length === 0 && initialRounds) {
-      updateRounds(initialRounds);
+    const fetchRounds = async () => {
+      await getCollectionData().then(newRounds => {
+        updateRounds(newRounds);
+      });
+    };
+
+    if (!rounds) {
+      fetchRounds();
     }
-  }, [rounds, initialRounds, updateRounds]);
+  }, [rounds]);
+
+  React.useEffect(() => {
+    const fetchUsers = async () => {
+      await getUserCollectionData().then(newUsers => {
+        updateUsers(newUsers);
+      });
+    };
+
+    if (!users) {
+      fetchUsers();
+    }
+  }, [users]);
 
   const handleAddRound = () => {
     addDocument({})
@@ -61,7 +83,6 @@ export const Dashboard = () => {
             onClick={handleAddRound}
             isLoading={addLoading}
             variantColor="purple"
-            // variant="outline"
             size="lg"
             leftIcon="small-add"
             isFullWidth>
@@ -80,8 +101,8 @@ export const Dashboard = () => {
 
       {usersLoading ? (
         <Spinner />
-      ) : initialUsers ? (
-        initialUsers.map(user => {
+      ) : users ? (
+        users.map(user => {
           return (
             <Badge key={user.id} variantColor="purple" fontSize={14} mr={2} mb={2}>
               {user.name}

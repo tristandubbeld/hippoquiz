@@ -4,7 +4,7 @@ import { Round } from '../types/round';
 import { Question } from '../types/question';
 
 interface RoundsState {
-  rounds: Round[];
+  rounds: Round[] | undefined;
   updateRounds: (newRounds: Round[]) => void;
   updateRound: (updatedRound: Round) => void;
   addRound: (newRound: Round) => void;
@@ -17,14 +17,14 @@ interface RoundsState {
 const RoundsContext = React.createContext<RoundsState | undefined>(undefined);
 
 export const RoundsProvider: React.FC = ({ children }) => {
-  const [rounds, setRounds] = React.useState<Round[]>([]);
+  const [rounds, setRounds] = React.useState<Round[] | undefined>();
 
   const updateRounds = (newRounds: Round[]) => {
     // removes rounds that don't exist in firestore anymore
     // adds rounds that are new in the firestore
     const updatedRounds = newRounds.filter(newRound => {
       // if the round already exists
-      const exists = rounds.find(round => {
+      const exists = rounds?.find(round => {
         return round.id === newRound.id;
       });
 
@@ -43,7 +43,7 @@ export const RoundsProvider: React.FC = ({ children }) => {
 
   const updateRound = (updatedRound: Round) => {
     // updates round that needs to be updated
-    const updatedRounds = rounds.map(round => {
+    const updatedRounds = rounds?.map(round => {
       // if round that needs to be updated is found
       if (round.id === updatedRound.id) {
         // return updated round
@@ -60,12 +60,16 @@ export const RoundsProvider: React.FC = ({ children }) => {
 
   const addRound = (newRound: Round) => {
     setRounds(rounds => {
-      return [...rounds, newRound];
+      if (rounds) {
+        return [...rounds, newRound];
+      }
+
+      return [newRound];
     });
   };
 
   const removeRound = (roundId: string) => {
-    const updatedRounds = rounds.filter(round => {
+    const updatedRounds = rounds?.filter(round => {
       return round.id !== roundId;
     });
 
@@ -73,7 +77,7 @@ export const RoundsProvider: React.FC = ({ children }) => {
   };
 
   const updateQuestions = (roundId: string, questions: Question[]) => {
-    const updatedRounds = rounds.map(round => {
+    const updatedRounds = rounds?.map(round => {
       if (round.id === roundId) {
         return {
           ...round,
@@ -88,14 +92,12 @@ export const RoundsProvider: React.FC = ({ children }) => {
   };
 
   const addQuestion = (roundId: string, question: Question) => {
-    const updatedRounds = rounds.map(round => {
+    const updatedRounds = rounds?.map(round => {
       if (round.id === roundId) {
-        const existingQuestions = round.questions;
-
-        if (existingQuestions) {
+        if (round.questions) {
           return {
             ...round,
-            questions: [...existingQuestions, question],
+            questions: [...round.questions, question],
           };
         }
 
@@ -112,7 +114,7 @@ export const RoundsProvider: React.FC = ({ children }) => {
   };
 
   const removeQuestion = (roundId: string, questionId: string) => {
-    const updatedRounds = rounds.map(round => {
+    const updatedRounds = rounds?.map(round => {
       if (round.id === roundId) {
         if (!round.questions) {
           console.log('Tried removing a question that does not exist');
@@ -169,14 +171,18 @@ export const useRounds = () => {
   };
 };
 
-export const useQuestions = () => {
+export const useQuestions = (roundId: string) => {
   const context = React.useContext<RoundsState | undefined>(RoundsContext);
 
   if (context === undefined) {
     throw new Error('useQuestions must be used within a RoundsProvider');
   }
 
+  const currentRound = context.rounds?.find(round => round.id === roundId);
+  const questions = currentRound?.questions;
+
   return {
+    questions,
     updateQuestions: context.updateQuestions,
     addQuestion: context.addQuestion,
     removeQuestion: context.removeQuestion,

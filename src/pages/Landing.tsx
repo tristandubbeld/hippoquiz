@@ -2,14 +2,15 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Input, Button, FormControl, FormLabel, Text, Box } from '@chakra-ui/core';
 
-import { useSaveToFirestore } from '../context/firebaseContext';
+import { useAddDocument } from '../context/firebaseContext';
 import { saveToLocalStorage } from '../utils/localStorage';
 import { User } from '../types/user';
+import { userRef } from '../utils/references';
 
 export const Landing = () => {
   const name = React.useRef<HTMLInputElement>(null);
   const history = useHistory();
-  const { loading, error, saveToStore } = useSaveToFirestore();
+  const { loading, addDocument } = useAddDocument(userRef);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,7 +18,7 @@ export const Landing = () => {
     if (name && name.current) {
       const nameValue = name.current.value;
 
-      saveToStore('users', { name: name.current.value }).then(id => {
+      addDocument({ name: name.current.value }).then(id => {
         if (typeof id === 'string') {
           saveToLocalStorage<User>('user', {
             name: nameValue,
@@ -49,7 +50,7 @@ export const Landing = () => {
           <Button variantColor="purple" type="submit" isLoading={loading} isFullWidth>
             Verder
           </Button>
-          {error && <div>{error}</div>}
+          {/* {error && <div>{error}</div>} */}
         </form>
       </div>
     </div>

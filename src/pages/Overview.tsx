@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { Text, Box, Spinner, Flex, Badge } from '@chakra-ui/core';
 
-import { useGetFromFirestore, useCollectionDataOnce } from '../context/firebaseContext';
+import { useCollectionDataOnce } from '../context/firebaseContext';
 import { RouterLink } from '../components/RouterLink';
 import { RouterButton } from '../components/RouterButton';
 import { RoundList } from '../components/RoundList';
@@ -10,40 +10,47 @@ import { useRounds } from '../context/roundsContext';
 
 import { User } from '../types/user';
 import { Round } from '../types/round';
-import { roundsRef } from '../utils/references';
+import { roundsRef, userRef } from '../utils/references';
+import { useUsers } from '../context/usersContext';
 
 interface OverviewProps {
   user?: User;
 }
 
-interface UserData {
-  name: string;
-}
-
 export const Overview = ({ user }: OverviewProps) => {
   const { rounds, updateRounds } = useRounds();
-  const { data: initialRounds, loading: roundsLoading } = useCollectionDataOnce<Round>(roundsRef);
+  const { users, updateUsers } = useUsers();
   const match = useRouteMatch();
 
+  const { loading: roundsLoading, getCollectionData } = useCollectionDataOnce<Round>(roundsRef);
+  const {
+    loading: usersLoading,
+    getCollectionData: getUsersCollectionData,
+  } = useCollectionDataOnce<User>(userRef);
+
   React.useEffect(() => {
-    if (rounds.length === 0 && initialRounds) {
-      updateRounds(initialRounds);
+    const fetchRounds = async () => {
+      await getCollectionData().then(newRounds => {
+        updateRounds(newRounds);
+      });
+    };
+
+    if (!rounds) {
+      fetchRounds();
     }
-  }, [rounds, initialRounds, updateRounds]);
+  }, [rounds]);
 
-  const { loading, error, documents } = useGetFromFirestore('users');
+  React.useEffect(() => {
+    const fetchUsers = async () => {
+      await getUsersCollectionData().then(newUsers => {
+        updateUsers(newUsers);
+      });
+    };
 
-  const users = documents
-    ? documents.map(doc => {
-        const id = doc.id;
-        const user = doc.data() as UserData;
-
-        return {
-          id,
-          name: user.name,
-        };
-      })
-    : undefined;
+    if (!users) {
+      fetchUsers();
+    }
+  }, [users]);
 
   if (!user) {
     return (
@@ -96,33 +103,30 @@ export const Overview = ({ user }: OverviewProps) => {
 
       <Box height={4} />
 
-      <div>
-        {loading ? (
-          <Flex align="center" justify="center" height="xs">
-            <Spinner />
-          </Flex>
-        ) : (
-          <Box>
-            {users &&
-              users.map(user => {
-                return (
-                  <Badge key={user.id} variantColor="purple" fontSize={14} mr={2} mb={2}>
-                    {user.name}
-                  </Badge>
-                );
-              })}
-          </Box>
-        )}
-        {error && (
-          <div>
-            <div>{error}</div>
-          </div>
-        )}
-        <Box height={4} />
-        <RouterButton to={`${match.url}/scoreboard`} variantColor="purple" isFullWidth>
-          Check hier het scorebord
-        </RouterButton>
-      </div>
+      {usersLoading ? (
+        <Flex align="center" justify="center" height="xs">
+          <Spinner />
+        </Flex>
+      ) : users ? (
+        <Box>
+          {users &&
+            users.map(user => {
+              return (
+                <Badge key={user.id} variantColor="purple" fontSize={14} mr={2} mb={2}>
+                  {user.name}
+                </Badge>
+              );
+            })}
+        </Box>
+      ) : (
+        <Box>No users found</Box>
+      )}
+
+      <Box height={4} />
+
+      <RouterButton to={`${match.url}/scoreboard`} variantColor="purple" isFullWidth>
+        Check hier het scorebord
+      </RouterButton>
     </div>
   );
 };

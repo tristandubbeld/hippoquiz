@@ -33,7 +33,7 @@ interface QuestionsConfiguratorProps {
 }
 
 export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) => {
-  const { addQuestion /* removeQuestion */ } = useQuestions();
+  const { questions, addQuestion, updateQuestions, removeQuestion } = useQuestions(roundId);
   const [newQuestion, setNewQuestion] = React.useState<QuestionInput>({ type: 'text' });
 
   const db = useFirestore();
@@ -46,16 +46,21 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
   const { loading: addLoading, addDocument } = useAddDocument<QuestionInput>(questionsRef);
   const { removingId, removeDocument } = useRemoveDocument(questionsRef);
 
-  const [questions, setQuestions] = React.useState<Question[]>([]);
-  const { data: initialQuestions, loading: questionsLoading } = useCollectionDataOnce<Question>(
+  const { loading: questionsLoading, getCollectionData } = useCollectionDataOnce<Question>(
     questionsRef,
   );
 
   React.useEffect(() => {
-    if (questions.length === 0 && initialQuestions) {
-      setQuestions(initialQuestions);
+    const fetchQuestions = async () => {
+      await getCollectionData().then(newQuestions => {
+        updateQuestions(roundId, newQuestions);
+      });
+    };
+
+    if (!questions) {
+      fetchQuestions();
     }
-  }, [questions, initialQuestions, setQuestions]);
+  }, [questions]);
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const type = e.target.value as 'text' | 'select';
@@ -71,14 +76,7 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
   const handleAddQuestion = () => {
     addDocument(newQuestion)
       .then(questionId => {
-        // add question to rounds state
-        // TODO: check if we still have to do this
         addQuestion(roundId, { id: questionId, ...newQuestion });
-
-        // add question to component state
-        setQuestions(questions => {
-          return [...questions, { id: questionId, ...newQuestion }];
-        });
 
         // re-initialize newQuestion
         setNewQuestion({ type: 'text' });
@@ -90,17 +88,8 @@ export const QuestionsConfigurator = ({ roundId }: QuestionsConfiguratorProps) =
 
   const handleRemoveQuestion = (questionId: string) => {
     removeDocument(questionId).then(() => {
-      setQuestions(questions => {
-        const updatedQuestions = questions.filter(question => {
-          return question.id !== questionId;
-        });
-
-        return updatedQuestions;
-      });
+      removeQuestion(roundId, questionId);
     });
-
-    // TODO: check if we still need to do this
-    // removeQuestion(roundId, questionId);
   };
 
   if (questionsLoading) {
